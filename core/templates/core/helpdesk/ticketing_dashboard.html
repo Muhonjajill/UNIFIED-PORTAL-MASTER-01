@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ticketing Dashboard{% endblock %}
+
+{% block content %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/ticketing_dashboard.css' %}">
+{% endblock %}
+
+<div class="dashboard-grid">
+  <!-- Ticket Report Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Ticket Report</h3>
+      <div class="card-menu"><i class="fas fa-ellipsis-h"></i></div>
+    </div>
+    <canvas id="ticketReportChart" class="chart-placeholder bar-chart"></canvas>
+  </div>
+
+  <!-- Monthly Ticket Trends -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Monthly Ticket Trends</h3>
+      <div class="card-menu"><i class="fas fa-ellipsis-h"></i></div>
+    </div>
+    <canvas id="monthlyTrendChart" class="chart-placeholder line-chart"></canvas>
+  </div>
+
+  <!-- Tickets per Terminal -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Tickets per Terminal</h3>
+      <div class="card-menu"><i class="fas fa-ellipsis-h"></i></div>
+    </div>
+    <canvas id="terminalChart" class="chart-placeholder bar-chart"></canvas>
+  </div>
+
+  <!-- Ticket Priority Pie -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Ticket Priority</h3>
+      <div class="card-menu"><i class="fas fa-ellipsis-h"></i></div>
+    </div>
+    <div class="chart-row">
+      <canvas id="priorityChart" class="chart-placeholder pie-chart"></canvas>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-color-box" style="background:#007bff;"></span> High</div>
+        <div class="legend-item"><span class="legend-color-box" style="background:#ffc107;"></span> Medium</div>
+        <div class="legend-item"><span class="legend-color-box" style="background:#28a745;"></span> Low</div>
+        <div class="legend-item"><span class="legend-color-box" style="background:#dc3545;"></span> Urgent</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Status Pie -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Ticket Statuses</h3>
+      <div class="card-menu"><i class="fas fa-ellipsis-h"></i></div>
+    </div>
+    <div class="chart-row">
+      <canvas id="statusChart" class="chart-placeholder pie-chart"></canvas>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-color-box" style="background:#28a745;"></span> Open</div>
+        <div class="legend-item"><span class="legend-color-box" style="background:#ffc107;"></span> Pending</div>
+        <div class="legend-item"><span class="legend-color-box" style="background:#007bff;"></span> In Progress</div>
+        <div class="legend-item"><span class="legend-color-box" style="background:#6c757d;"></span> Closed</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    const STATUS_DATA = {{ status_data|safe }};
+    const PRIORITY_DATA = {{ priority_data|safe }};
+    const MONTHLY_DATA = {{ monthly_data|safe }};
+    const TERMINAL_DATA = {{ terminal_data|safe }};
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+  <script src="{% static 'js/ticketing_dashboard.js' %}"></script>
+{% endblock %}
+
+
+

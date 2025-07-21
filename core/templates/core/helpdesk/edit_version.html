@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}Edit Version - {{ version.terminal }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+  <div class="bg-gray-900 text-black rounded-xl shadow-md p-6">
+    <h2 class="text-2xl font-semibold mb-4">✏️ Edit Version - {{ version.terminal }}</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ form.terminal.label_tag }}
+        {{ form.terminal|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.manufacturer.label_tag }}
+        {{ form.manufacturer|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.template.label_tag }}
+        {{ form.template|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.firmware.label_tag }}
+        {{ form.firmware|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.xfs.label_tag }}
+        {{ form.xfs|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.ejournal.label_tag }}
+        {{ form.ejournal|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.responsible.label_tag }}
+        {{ form.responsible|add_class:"form-input bg-gray-800 text-black" }}
+
+        {{ form.app_version.label_tag }}
+        {{ form.app_version|add_class:"form-input bg-gray-800 text-black" }}
+      </div>
+
+      <div class="mt-6">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-black">💾 Save Changes</button>
+        <a href="{% url 'version_detail' version.pk %}" class="ml-4 text-gray-400 hover:underline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

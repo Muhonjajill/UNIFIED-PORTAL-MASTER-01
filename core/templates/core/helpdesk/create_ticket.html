@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create New Ticket{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/create_ticket.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <h2>Create New Ticket</h2>
+    
+    {% if form.errors %}
+    <div class="form-errors">
+    <ul>
+        {% for field in form %}
+        {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" class="ticket-form">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="{{ form.brts_unit.id_for_label }}">BRTS Unit</label>
+                    {{ form.brts_unit }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.problem_category.id_for_label }}">Problem Category</label>
+                    {{ form.problem_category }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">Title</label>
+                    {{ form.title }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.terminal.id_for_label }}">Terminal</label>
+                    {{ form.terminal }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="{{ form.priority.id_for_label }}">Priority</label>
+                    {{ form.priority }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}">Status</label>
+                    {{ form.status }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.responsible.id_for_label }}">Responsible</label>
+                    {{ form.responsible }}
+                </div>
+                <div class="form-group">
+                    <label for="comment_summary">Comments</label>
+                    {{ form.comment_summary }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.created_at.id_for_label }}">Created At</label>
+                    {{ form.created_at }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.updated_at.id_for_label }}">Updated At</label>
+                    {{ form.updated_at }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" name="create" class="btn btn-primary">Create</button>
+            <button type="submit" name="create_another" class="btn btn-outline">Create & Add Another</button>
+            <a href="{% url 'ticketing_dashboard' %}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

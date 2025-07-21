@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% load static %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+</head>
+<body>
+  <header class="dashboard-header">
+    <div class="logo"><i class="fas fa-tools"></i> AdminPanel</div>
+    <nav>
+      <form id="logout-form" method="post" action="{% url 'logout' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" ><i class="fas fa-sign-out-alt"></i> 🚪 Logout</button>
+      </form>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <section class="welcome-card">
+      <h2>Welcome, {{ user.username }}</h2>
+      <p>You have administrative access. Use the panels below to manage the system.</p>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="card stat-card">
+        <i class="fas fa-users card-icon"></i>
+        <div class="card-info">
+          <h3>Total Users</h3>
+          <p>{{ total_users }}</p>
+        </div>
+      </div>
+
+      <div class="card stat-card">
+        <i class="fas fa-folder-open card-icon"></i>
+        <div class="card-info">
+          <h3>Total Files</h3>
+          <p>{{ total_files }}</p>
+        </div>
+      </div>
+
+      <div class="card stat-card">
+        <i class="fas fa-ticket-alt card-icon"></i>
+        <div class="card-info">
+          <h3>Open Tickets</h3>
+          <p>{{ open_tickets }}</p>
+        </div>
+      </div>
+
+      <div class="card chart-card">
+        <h3>User Roles Overview</h3>
+        <div class="chart-placeholder">📊 Chart.js placeholder</div>
+      </div>
+
+      <div class="card chart-card">
+        <h3>File Upload Activity</h3>
+        <div class="chart-placeholder">📈 Chart placeholder</div>
+      </div>
+    </section>
+
+    <section class="quick-actions">
+      <a href="{% url 'manage_file_categories' %}" class="btn-nav">
+        📂 Manage File Categories
+      </a>
+    </section>
+
+    <div class="container">
+      <h2>👤 Manage User Roles</h2>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Current Role</th>
+            <th>Change Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              {% if user.groups.first %}
+                {{ user.groups.first.name }}
+              {% else %}
+                <em>No Role</em>
+              {% endif %}
+            </td>
+            <td>
+              <!-- Role Change Form -->
+              <form method="post" action="{% url 'admin_dashboard' %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <input type="hidden" name="action" value="update_role">
+                <select name="new_role" required>
+                  <option value="">--Select--</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Editor">Editor</option>
+                  <option value="Viewer">Viewer</option>
+                </select>
+                <button type="submit" class="btn-update">Update</button>
+              </form>
+
+              <!-- Delete Form -->
+              <form method="post" action="{% url 'admin_dashboard' %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <input type="hidden" name="action" value="delete_user">
+                <button type="submit" class="btn-delete"><i class="fas fa-trash-alt"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <section class="user-management">
+      <h3>Create New User</h3>
+      <form method="post" action="{% url 'create_user' %}" class="create-user-form">
+        {% csrf_token %}
+        <input type="text" name="first_name" placeholder="First Name" required>
+        <input type="text" name="last_name" placeholder="Last Name" required>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <select name="role" required>
+          <option value="">Select Role</option>
+          <option value="Admin">Admin</option>
+          <option value="Editor">Editor</option>
+          <option value="Viewer">Viewer</option>
+        </select>
+
+        <button type="submit" class="btn-create"><i class="fas fa-user-plus"></i> Create User</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

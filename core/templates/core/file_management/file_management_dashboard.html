@@ -1,0 +1,110 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Management Dashboard</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/file_management_dashboard.css'%}">
+</head>
+<body>
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="profileContent">
+        <!-- Profile content will be loaded here -->
+        </div>
+    </div>
+    </div>
+    <!-- Top Navigation Bar -->
+    <div class="top-navbar">
+        <div class="logo">Blue River Technology Solutions</div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search for files, categories, or users...">
+        </div>
+
+        <div class="user-profile" id="userProfile">
+            <div class="profile-dropdown">
+                <img src="{{ user.profile.avatar.url|default:'https://placehold.co/40x40' }}" alt="User Avatar">
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="dropdown-content">
+                <a href="#" onclick="openProfileModal(event)"><i class="fas fa-user icon"></i> Profile</a>
+                <a href="{% url 'settings' %}"><i class="fas fa-cog icon"></i> Settings</a>
+                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt icon"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <img src="{% static 'icons/logo.png'%}" width="200px" height="150px">
+        <div class="sidebar-header">Dashboard</div>
+        <ul>
+            <li><a href="#" class="active"><i class="fas fa-th-large icon"></i> Dashboard</a></li>
+            <li><a href="{% url 'file_list' %}"><i class="fas fa-folder icon"></i> Files</a></li>
+            <li><a href="{% url 'file_list' %}?sort=recent"><i class="fas fa-history icon"></i> Recent</a></li>
+            <li><a href="{% url 'user_list' %}"><i class="fas fa-users icon"></i> Users</a></li>
+            <li><a href="#"><i class="fas fa-archive icon"></i> Archive</a></li>
+            <li><a href="#"><i class="fas fa-cogs icon"></i> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <h2 class="section-title">File Types</h2>
+        <div class="file-types-grid">
+            {% for type in file_types %}
+            <div class="file-type-card">
+                <i class="{{type.icon}} main-icon"></i>
+                <h3>{{type.type}}</h3>
+                <p class="count">{{ type.count }} file{{ type.count|pluralize }}</p>
+                <i class="fas fa-folder folder-icon-overlay"></i>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h2 class="section-title">Categories</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <div class="category-card">
+                <div class="category-header">
+                    <i class="fas fa-folder icon"></i>
+                    <h4>{{category.name}}</h4>
+                </div>
+                <p class="file-count">{{ category.file_count }} file{{ category.file_count|pluralize}}</p>
+                <a href="{% url 'file_list_by_category' category.name %}" class="view-files-link">View Files <i class="fas fa-arrow-right"></i></a>
+            </div>
+            {% empty %}
+                <p>No categories available</p>
+            {% endfor %}
+        </div>
+
+        <h2 class="section-title">Recently Uploaded</h2>
+        <div class="recent-files-list">
+        {% for file in recent_files %}
+            <div class="recent-file-card">
+            <i class="fas fa-file-alt file-icon"></i>
+            <div class="file-info">
+                <strong>{{ file.title }}</strong><br>
+                <small>{{ file.upload_date|date:"M d, Y H:i" }}</small><br>
+                <a href="{{ file.file.url }}" download>⬇ Download</a>
+            </div>
+            </div>
+        {% empty %}
+            <p>No recent files found.</p>
+        {% endfor %}
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/file_management_dashboard.js'%}"></script>
+</body>
+</html>
+

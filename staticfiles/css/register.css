@@ -1,0 +1,141 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #e1f5fe, #fce4ec);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Wrapper */
+.register-wrapper {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+}
+
+/* Card */
+.register-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Logo */
+.logo-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.register-logo {
+  width: 70px;
+  height: auto;
+}
+
+/* Headline */
+.register-card h2 {
+  text-align: center;
+  color: #004080;
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+}
+
+/* Form */
+.register-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.register-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  font-size: 1rem;
+  transition: border 0.3s;
+}
+
+.register-form input:focus {
+  border-color: #007bff;
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+/* Button */
+.btn-register {
+  width: 100%;
+  background: linear-gradient(135deg, #007bff, #5a8dee);
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-top: 10px;
+}
+
+.btn-register:hover {
+  background: linear-gradient(135deg, #0056b3, #3a6edc);
+  transform: scale(1.02);
+}
+
+/* Login Link */
+.login-link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .register-card h2 {
+    font-size: 1.4rem;
+  }
+}

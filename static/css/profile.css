@@ -1,0 +1,256 @@
+/* General Body Styling */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+
+/* Profile Container Styling */
+.profile-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.8s ease-out;
+}
+
+/* Fade-In Animation for Profile Container */
+.fade-in {
+    animation: fadeIn 1s ease-out;
+}
+.form-section {
+    margin-bottom: 1.5rem;
+}
+/* Avatar Zoom Animation */
+.avatar-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.avatar-img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+}
+.avatar-img.zoom-in:hover {
+    transform: scale(1.1);
+}
+
+.profile-avatar {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Zoom-In Effect on Avatar */
+.profile-avatar.zoom-in:hover {
+    transform: scale(1.1);
+}
+
+/* Header Styling */
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #007bff;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out forwards;
+}
+
+/* Profile Details Styling */
+.profile-details p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    color: #555;
+    opacity: 0;
+    animation: fadeIn 2s ease-out forwards;
+}
+
+/* Profile Links Styling */
+.profile-links {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+}
+
+/* Profile Links Animation */
+.profile-links a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 2.5s ease-out forwards;
+}
+
+.profile-links a:hover {
+    color: #0056b3;
+}
+
+/* Button Styling (if you plan to add any button) */
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 3s ease-out forwards;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: scale(0.95);
+    opacity: 0;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Close button styling for modal */
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px; right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Input & Select Styling */
+input, select, textarea {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+button.btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    transition: background-color 0.3s ease;
+}
+button.btn-primary:hover {
+    background-color: #0056b3;
+}
+.settings-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.8s ease-out;
+}
+.settings-links {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+}
+
+/* Settings Links Animation */
+.settings-links a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 2.5s ease-out forwards;
+}
+
+.settings-links a:hover {
+    color: #0056b3;
+}
+/* Mobile Responsiveness */
+@media screen and (max-width: 600px) {
+    .profile-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    .settings-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

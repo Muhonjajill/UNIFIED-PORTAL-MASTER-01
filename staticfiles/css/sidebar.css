@@ -1,0 +1,242 @@
+:root {
+  --primary-color: #007bff;
+  --primary-color-rgb: 0, 123, 255;
+  --sidebar-bg: #fff;
+  --sidebar-text: #343a40;
+  --sidebar-hover: #f0f0f0;
+  --active-bg: var(--primary-color);
+  --active-text: #fff;
+  --border-color: #dee2e6;
+  --header-height: 60px;
+  --sidebar-width: 250px;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Shared Transitions */
+.sidebar,
+.sidebar ul li a,
+.sub-menu,
+.has-submenu > a .toggle-icon {
+  transition: all 0.3s ease;
+}
+
+/* Sidebar Base */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  padding: 20px 0 30px;
+  height: 100vh;
+  position: fixed;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-color);
+  z-index: 1001;
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.sidebar img {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0 20px;
+}
+
+.sidebar ul li {
+  margin-bottom: 5px;
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+
+.sidebar ul li a .icon {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+  font-size: 1rem;
+  transition: transform 0.3s, color 0.3s;
+  color: var(--sidebar-text);
+}
+
+.sidebar ul li a span {
+  flex: 1;
+  margin-left: 12px;
+  font-weight: 500;
+}
+
+.sidebar ul li a:hover:not(.active) {
+  background: var(--sidebar-hover);
+  color: var(--primary-color);
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar ul li a:hover .icon {
+  transform: scale(1.1);
+  color: var(--primary-color);
+}
+
+.sidebar ul li a.active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.3);
+  animation: activeGlow 1.5s infinite alternate;
+}
+
+@keyframes activeGlow {
+  from {
+    box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.3);
+  }
+  to {
+    box-shadow: 0 6px 15px rgba(var(--primary-color-rgb), 0.5);
+  }
+}
+
+/* Submenu Styles */
+.has-submenu > a .toggle-icon {
+  margin-left: auto;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.has-submenu.expanded > a .toggle-icon {
+  transform: rotate(90deg);
+}
+
+.sub-menu {
+  max-height: 0;
+  overflow: hidden;
+  padding-left: 20px;
+  transition: height 0.4s ease-out, padding 0.4s ease-out;
+}
+
+.has-submenu.expanded > .sub-menu {
+  height: auto; 
+  transition: none;
+  max-height: 500px;
+  padding: 5px 0;
+}
+
+.sub-menu li a {
+  padding: 10px 20px 10px 40px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sidebar-text);
+  transition: background 0.3s, color 0.3s;
+}
+
+.sub-menu li a:hover,
+.sub-menu li a.active {
+  background: var(--sidebar-hover);
+  color: var(--primary-color);
+}
+
+.sub-menu li a .icon {
+  width: 18px;
+  color: inherit;
+}
+
+/* Highlight expanded parent */
+.has-submenu.expanded > a {
+  background: var(--sidebar-hover);
+  color: var(--primary-color);
+}
+
+.has-submenu.expanded > a .icon {
+  color: var(--primary-color);
+}
+
+/* Mobile Sidebar */
+@media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    z-index: 2000;
+    transition: transform 0.4s ease-out;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+    animation: slideInSidebar 0.4s ease forwards;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .hamburger {
+    display: block;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 3000;
+    color: var(--sidebar-text);
+  }
+}
+
+@keyframes slideInSidebar {
+  from {
+    transform: translateX(-100%);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.active + .sidebar-overlay {
+  display: block;
+}

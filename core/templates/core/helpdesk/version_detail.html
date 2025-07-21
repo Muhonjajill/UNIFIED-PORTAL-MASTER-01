@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Version Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>🧾 Version Details</h2>
+
+  <table class="table table-bordered">
+    <tr>
+      <th>Terminal</th>
+      <td>{{ version.terminal }}</td>
+    </tr>
+    <tr>
+      <th>Manufacturer</th>
+      <td>{{ version.manufacturer }}</td>
+    </tr>
+    <tr>
+      <th>Template</th>
+      <td>{{ version.template }}</td>
+    </tr>
+    <tr>
+      <th>Firmware</th>
+      <td>{{ version.firmware }}</td>
+    </tr>
+    <th>XFS</th>
+      <td>{{ version.xfs }}</td>
+    </tr>
+    <tr>
+      <th>Ejournal</th>
+      <td>{{ version.ejournal }}</td>
+    </tr>
+    <tr>
+      <th>Responsible</th>
+      <td>{{ version.responsible }}</td>
+    </tr>
+    <tr>
+      <th>App Version</th>
+      <td>{{ version.app_version }}</td>
+    </tr>
+    
+    
+    <tr>
+      <th>Created At</th>
+      <td>{{ version.created_at }}</td>
+    </tr>
+  </table>
+
+  <h4>Add a Comment</h4>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <textarea name="comment" class="form-control" rows="4" placeholder="Write a comment..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Comment</button>
+  </form>
+
+  <hr>
+  <h4>Previous Comments</h4>
+  {% if comments %}
+    <ul class="list-group mb-4">
+      {% for comment in comments %}
+        <li class="list-group-item">
+          {{ comment.text }}<br>
+          <small class="text-muted">{{ comment.created|date:"M d, Y H:i" }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No comments yet.</p>
+  {% endif %}
+  <a href="{% url 'edit_version' version.pk %}" class="btn btn-warning">Edit</a>
+  <a href="{% url 'delete_version' version.pk %}" class="btn btn-danger">Delete</a>
+  <a href="{% url 'version_controls' %}" class="btn btn-secondary">Back</a>
+</div>
+{% endblock %}

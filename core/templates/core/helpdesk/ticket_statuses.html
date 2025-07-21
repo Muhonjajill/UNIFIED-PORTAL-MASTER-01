@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ticket Statuses{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ticket_statuses.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="tickets-container">
+  <div class="section-header">
+    <h2>🎫 Ticket Statuses</h2>
+    <p>Display and manage ticket statuses here.</p>
+  </div>
+  
+  <div class="ticket-table-wrapper">
+    <table class="ticket-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Description</th>
+          <th>Color</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-open">Open</span></td>
+          <td>Ticket is currently open and awaiting action.</td>
+          <td style="color: green;">Green</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td>Ticket is on hold awaiting more information.</td>
+          <td style="color: orange;">Orange</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-closed">Closed</span></td>
+          <td>Ticket has been resolved or closed.</td>
+          <td style="color: grey;">Grey</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script src="{% static 'js/ticketing_dashboard.js' %}"></script>
+{% endblock %}

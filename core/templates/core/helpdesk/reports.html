@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/reports.css' %}">
+
+<div class="page-container">
+  <h2><i class="fas fa-file-alt"></i> Reports</h2>
+  <p>View system reports here.</p>
+
+  <!-- Filters -->
+  <form method="get" class="report-filters">
+    <select name="category">
+      <option value="">All Categories</option>
+      <option value="tickets">Tickets</option>
+      <option value="users">Users</option>
+      <option value="zones">Zones</option>
+    </select>
+
+    <input type="date" name="start_date">
+    <input type="date" name="end_date">
+
+    <button type="submit" class="btn">Filter</button>
+  </form>
+
+  <!-- Report Table -->
+  <div class="table-responsive">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Report Name</th>
+          <th>Category</th>
+          <th>Date Generated</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ report.name }}</td>
+          <td>{{ report.category }}</td>
+          <td>{{ report.generated_at }}</td>
+          <td><a href="{{ report.file.url }}" class="btn btn-sm">Download</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5">No reports found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script src="{% static 'js/ticketing_dashboard.js' %}"></script>
+{% endblock %}
