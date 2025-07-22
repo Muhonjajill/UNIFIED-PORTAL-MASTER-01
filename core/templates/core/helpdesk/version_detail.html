@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load static %}
 
 {% block title %}Version Detail{% endblock %}
@@ -70,6 +71,9 @@
   {% else %}
     <p>No comments yet.</p>
   {% endif %}
+
+  
+
   <a href="{% url 'edit_version' version.pk %}" class="btn btn-warning">Edit</a>
   <a href="{% url 'delete_version' version.pk %}" class="btn btn-danger">Delete</a>
   <a href="{% url 'version_controls' %}" class="btn btn-secondary">Back</a>

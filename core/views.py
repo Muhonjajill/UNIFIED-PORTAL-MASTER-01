@@ -3,7 +3,7 @@ from .models import File
 from django.http import FileResponse, JsonResponse
 from .forms import FileUploadForm, ProblemCategoryForm, TicketForm
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.utils.timezone import now
 from django.db.models.functions import TruncMonth
 from core.models import FileCategory
@@ -34,6 +34,7 @@ from .utils import is_admin
 import json
 import pandas as pd
 from email.mime.image import MIMEImage
+
 
 def in_group(user, group_name):
     return user.is_authenticated and (user.is_superuser or user.groups.filter(name=group_name).exists())
@@ -1143,39 +1144,66 @@ def reports(request):
 
 
 def version_controls(request):
+    form = VersionControlForm()
+
     if request.method == 'POST':
-        print("Form submitted!")
-        form = VersionControlForm(request.POST)
-        if form.is_valid():
-            print("Form is valid")
-            form.save()
-            if 'create_another' in request.POST:
-                return redirect('version_controls')
-            else:
-                return redirect('version_controls')
-    else:
-        form = VersionControlForm()
+        if 'create' in request.POST or 'create_another' in request.POST:
+            form = VersionControlForm(request.POST)
+            if form.is_valid():
+                form.save()
+                if 'create_another' in request.POST:
+                    form = VersionControlForm()
+                else:
+                    return redirect('version_controls')
 
-
+    # Initial unfiltered queryset
     versions = VersionControl.objects.all().order_by('-created_at')
 
-    return render(request, 'core/helpdesk/version_control.html', {
+    # Handle AJAX filter request
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        terminal = request.GET.get('terminal')
+        firmware = request.GET.get('firmware')
+        app_version = request.GET.get('app_version')
+
+        if terminal and terminal != 'All':
+            versions = versions.filter(terminal=terminal)
+        if firmware and firmware != 'All':
+            versions = versions.filter(firmware=firmware)
+        if app_version and app_version != 'All':
+            versions = versions.filter(app_version=app_version)
+
+        return render(request, 'core/helpdesk/partials/version_table.html', {
+            'versions': versions
+        })
+
+    context = {
         'form': form,
-        'versions': versions
-    })
+        'versions': versions,
+        'terminals': VersionControl.objects.values_list('terminal', flat=True).distinct(),
+        'firmwares': VersionControl.objects.values_list('firmware', flat=True).distinct(),
+        'app_versions': VersionControl.objects.values_list('app_version', flat=True).distinct(),
+    }
+    return render(request, 'core/helpdesk/version_control.html', context)
+
+
 
 
 
 def version_detail(request, pk):
     version = get_object_or_404(VersionControl, pk=pk)
-    comments = version.comments.all().order_by('-created')  # latest first
+    comments = version.comments.all().order_by('-created')  # Latest first
+
     if request.method == 'POST':
         comment_text = request.POST.get('comment')
         if comment_text:
             VersionComment.objects.create(version=version, text=comment_text)
         return redirect('version_detail', pk=pk)
-    return render(request, 'core/helpdesk/version_detail.html', {'version': version, 'comments': comments,})
 
+    return render(request, 'core/helpdesk/version_detail.html', {
+        'version': version,
+        'comments': comments,
+        
+    })
 
 
 def edit_version(request, pk):

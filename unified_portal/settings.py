@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     'core.apps.CoreConfig',
     'widget_tweaks',
+    'simple_history',
 
 ]
 

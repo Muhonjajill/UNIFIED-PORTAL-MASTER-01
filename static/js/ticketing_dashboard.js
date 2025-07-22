@@ -49,6 +49,8 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
+
   // === Search Filter Function (targets dashboard cards) ===
   const searchInput = document.getElementById('navbarSearchInput');
   if (searchInput) {

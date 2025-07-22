@@ -15,7 +15,7 @@
   <!-- Trigger Modal Buttons -->
   <div class="form-buttons">
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createVersionModal">Create</button>
-    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createVersionModal">Create & Create Another</button>
+   <!-- <button type="button" name="create_another" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createVersionModal">Create & Create Another</button> -->
     <a href="{% url 'version_controls' %}" class="btn btn-outline-light">Cancel</a>
   </div>
 
@@ -53,6 +53,37 @@
     </div>
   </div>
 
+  <!--adding filter on version controls-->
+  <div class="filter-section">
+  <label>Terminal:
+    <select id="terminal-filter" class="form-select">
+      <option value="All">All</option>
+      {% for t in terminals %}
+        <option value="{{ t }}">{{ t }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Firmware:
+    <select id="firmware-filter" class="form-select">
+      <option value="All">All</option>
+      {% for f in firmwares %}
+        <option value="{{ f }}">{{ f }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>App Version:
+    <select id="app-version-filter" class="form-select">
+      <option value="All">All</option>
+      {% for a in app_versions %}
+        <option value="{{ a }}">{{ a }}</option>
+      {% endfor %}
+    </select>
+  </label>
+</div>
+
+
   <hr>
 
   <div class="table-responsive">
@@ -70,6 +101,7 @@
         </tr>
       </thead>
       <tbody>
+       
         {% for item in versions %}
         <tr>
           <td>{{ forloop.counter }}</td>
@@ -89,9 +121,43 @@
         {% endfor %}
       </tbody>
     </table>
+    
   </div>
 </div>
 
+
+<script>
+  const terminalSelect = document.getElementById("terminal-filter");
+  const firmwareSelect = document.getElementById("firmware-filter");
+  const appVersionSelect = document.getElementById("app-version-filter");
+
+  const applyFilters = () => {
+    const terminal = terminalSelect.value;
+    const firmware = firmwareSelect.value;
+    const appVersion = appVersionSelect.value;
+
+    const params = new URLSearchParams({
+      terminal,
+      firmware,
+      app_version: appVersion,
+    });
+
+    fetch(`?${params}`, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+      .then(response => response.text())
+      .then(data => {
+        document.querySelector(".table-responsive").innerHTML = data;
+      });
+  };
+
+  terminalSelect.addEventListener("change", applyFilters);
+  firmwareSelect.addEventListener("change", applyFilters);
+  appVersionSelect.addEventListener("change", applyFilters);
+</script>
 <script src="{% static 'js/ticketing_dashboard.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
+

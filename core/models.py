@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
+from simple_history.models import HistoricalRecords
+
 
 class EmailOTP(models.Model):
         user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -122,6 +124,7 @@ class VersionControl(models.Model):
     responsible = models.CharField(max_length=100,  default='N/A')  # New
     app_version = models.CharField(max_length=100,  default='1.0.0')  # New
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return f"{self.terminal} - {self.firmware}"
