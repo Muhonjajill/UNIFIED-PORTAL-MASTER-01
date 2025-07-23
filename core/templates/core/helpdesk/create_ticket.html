@@ -35,6 +35,15 @@
                     {{ form.brts_unit }}
                 </div>
                 <div class="form-group">
+                    <label for="{{ form.customer.id_for_label }}">Customer</label>
+                    {{ form.customer }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.region.id_for_label }}">Region</label>
+                    {{ form.region }}
+                </div>
+
+                <div class="form-group">
                     <label for="{{ form.problem_category.id_for_label }}">Problem Category</label>
                     {{ form.problem_category }}
                 </div>

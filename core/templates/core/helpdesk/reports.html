@@ -14,37 +14,55 @@
 
   <!-- Filters -->
   <form method="get" class="report-filters">
-    <select name="customer">
-      <option value="All">All Customers</option>
-      {% for customer in customers %}
-        <option value="{{ customer }}" {% if request.GET.customer == customer %}selected{% endif %}>{{ customer }}</option>
-      {% endfor %}
-    </select>
+    <button type="submit" name="download" value="excel" class="btn btn-success" style="margin-top: 10px;">
+      📥 Download Excel
+    </button>
 
-    <select name="terminal">
-      <option value="All">All Terminals</option>
-      {% for terminal in terminals %}
-        <option value="{{ terminal }}" {% if request.GET.terminal == terminal %}selected{% endif %}>{{ terminal }}</option>
-      {% endfor %}
-    </select>
+    <hr>
+    
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <select name="customer" class="form-control">
+          <option value="All">All Customers</option>
+          {% for customer in customers %}
+            <option value="{{ customer.id }}" {% if request.GET.customer == customer.id|stringformat:"s" %}selected{% endif %}>{{ customer.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <select name="region">
-      <option value="All">All Regions</option>
-      {% for region in regions %}
-        <option value="{{ region }}" {% if request.GET.region == region %}selected{% endif %}>{{ region }}</option>
-      {% endfor %}
-    </select>
+      <div class="col-md-3">
+        <select name="terminal" class="form-control">
+          <option value="All">All Terminals</option>
+          {% for terminal in terminals %}
+            <option value="{{ terminal.id }}" {% if request.GET.terminal == terminal.id|stringformat:"s" %}selected{% endif %}>{{ terminal.branch_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <select name="category">
-      <option value="All">All Categories</option>
-      {% for cat in categories %}
-        <option value="{{ cat }}" {% if request.GET.category == cat %}selected{% endif %}>{{ cat }}</option>
-      {% endfor %}
-    </select>
+      <div class="col-md-3">
+        <select name="region" class="form-control">
+          <option value="All">All Regions</option>
+          {% for region in regions %}
+            <option value="{{ region.id }}" {% if request.GET.region == region.id|stringformat:"s" %}selected{% endif %}>{{ region.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <select name="category" class="form-control">
+          <option value="All">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <br><br>
 
     <!-- Date Filters -->
-    <input type="text" id="start_date" name="start_date" class="date-picker" value="{{ request.GET.start_date }}" placeholder="Start Date">
-    <input type="text" id="end_date" name="end_date" class="date-picker" value="{{ request.GET.end_date }}" placeholder="End Date">
+    <input type="text" id="start_date" name="start_date" class="date-picker" value="{{ request.GET.start_date }}" placeholder="Start Date" <i class="fa fa-calendar" aria-hidden="true" />>
+    <input type="text" id="end_date" name="end_date" class="date-picker" value="{{ request.GET.end_date }}" placeholder="End Date" <i class="fa fa-calendar" aria-hidden="true"></i>>
 
 
     <button type="submit" class="btn">Filter</button>
@@ -55,9 +73,10 @@
     <table class="report-table">
       <thead>
         <tr>
-          <th>#</th>
+          <th>ID</th>
           <th>Customer</th>
           <th>Terminal</th>
+          <th>Region</th>
           <th>Problem Category</th>
           <th>Priority</th>
           <th>Status</th>
@@ -71,7 +90,8 @@
         <tr>
           <td>{{ forloop.counter }}</td>
           <td>{{ ticket.customer.name }}</td>
-          <td>{{ ticket.terminal.name }}</td>
+          <td>{{ ticket.terminal }}</td>
+          <td>{{ ticket.region.name }}</td>
           <td>{{ ticket.problem_category.name }}</td>
           <td>{{ ticket.priority }}</td>
           <td>{{ ticket.status }}</td>

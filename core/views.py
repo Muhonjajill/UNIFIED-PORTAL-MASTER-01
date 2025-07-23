@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_list_or_404, redirect
 from .models import File
-from django.http import FileResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, JsonResponse
 from .forms import FileUploadForm, ProblemCategoryForm, TicketForm
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.db.models import Count, Q, F
@@ -34,6 +34,8 @@ from .utils import is_admin
 import json
 import pandas as pd
 from email.mime.image import MIMEImage
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 
 def in_group(user, group_name):
@@ -1131,14 +1133,14 @@ def reports(request):
     region = request.GET.get('region')
     category = request.GET.get('category')
 
-    if customer and customer != 'All':
-        tickets = tickets.filter(customer=customer)
-    if terminal and terminal != 'All':
-        tickets = tickets.filter(terminal=terminal)
-    if region and region != 'All':
-        tickets = tickets.filter(region=region)
-    if category and category != 'All':
-        tickets = tickets.filter(problem_category=problem_category)
+    if customer and customer != 'All' and customer !="None":
+        tickets = tickets.filter(customer_id=customer)
+    if terminal and terminal != 'All' and terminal != "None":
+        tickets = tickets.filter(terminal_id=terminal)
+    if region and region != 'All' and region != "None":
+        tickets = tickets.filter(region_id=region)
+    if category and category != 'All' and category !="None":
+        tickets = tickets.filter(problem_category_id=category)
 
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
@@ -1147,14 +1149,57 @@ def reports(request):
         tickets = tickets.filter(created_at__date__gte=parse_date(start_date))
     if end_date:
         tickets = tickets.filter(created_at__date__lte=parse_date(end_date))
+
+
+      # 👉 Check if user clicked "Download Excel"
+    if request.GET.get('download') == 'excel':
+        return export_tickets_to_excel(tickets)
+
     context = {
         'tickets': tickets,
-        'customers': Ticket.objects.values_list('customer', flat=True).distinct(),
-        'terminals': Ticket.objects.values_list('terminal', flat=True).distinct(),
-        'regions': Ticket.objects.values_list('region', flat=True).distinct(),
-        'categories': Ticket.objects.values_list('problem_category', flat=True).distinct(),
+        'customers': Customer.objects.all(),
+        'terminals': Terminal.objects.all(),
+        'regions': Region.objects.all(),
+        'categories': ProblemCategory.objects.all(),
     }
     return render(request, 'core/helpdesk/reports.html', context)
+
+def export_tickets_to_excel(tickets):
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Tickets Report"
+
+    headers = [
+        'ID', 'Customer', 'Terminal',  'Region', 'Category', 'Responsible',
+        'Description', 'Created At', 'CDM name', 'Serial number'
+    ]
+    sheet.append(headers)
+
+    for ticket in tickets:
+        sheet.append([
+            ticket.id,
+            str(ticket.customer.name) if ticket.customer else "N/A",
+            str(ticket.terminal.branch_name) if ticket.terminal else "N/A",
+            str(ticket.region.name) if ticket.region else "N/A",
+            str(ticket.problem_category.name) if ticket.problem_category else "N/A",
+            str(ticket.responsible) if ticket.responsible else "N/A",
+            str(ticket.description) if ticket.description else "N/A",
+            ticket.created_at.strftime("%Y-%m-%d %H:%M:%S") if ticket.created_at else "N/A",
+            
+            ticket.terminal.cdm_name if ticket.terminal else "N/A",
+            ticket.terminal.serial_number if ticket.terminal else "N/A",
+        ])
+
+    # Adjust column widths
+    for column_cells in sheet.columns:
+        length = max(len(str(cell.value)) for cell in column_cells)
+        sheet.column_dimensions[get_column_letter(column_cells[0].column)].width = length + 2
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="tickets_report.xlsx"'
+    workbook.save(response)
+    return response 
+
 
 
 def version_controls(request):

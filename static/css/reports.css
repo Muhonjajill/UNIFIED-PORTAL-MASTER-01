@@ -50,7 +50,7 @@
 
 .table-responsive {
   overflow-x: auto;
-  border-radius: 10px;
+  border-radius: 14px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
   background-color: white;
 }
@@ -60,7 +60,15 @@
   border-collapse: collapse;
   font-size: 14px;
 }
+ .filter-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
 
+  .filter-row .column {
+    flex: 1;
+  }
 .report-table thead {
   background-color: #343a40;
   color: white;

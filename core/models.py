@@ -78,7 +78,7 @@ class Terminal(models.Model):
     zone = models.ForeignKey('Zone', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return f"{self.customer.name if self.customer else 'No Customer'} - {self.cdm_name}"
+        return f"{self.customer.name if self.customer else 'No Customer'} - {self.branch_name}"
 
 
 class SystemUser(models.Model):

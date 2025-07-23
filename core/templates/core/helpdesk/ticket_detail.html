@@ -16,7 +16,9 @@
       <div><strong>Status:</strong> <span class="badge badge-{{ ticket.status }}">{{ ticket.get_status_display }}</span></div>
       <div><strong>Priority:</strong> <span class="badge badge-{{ ticket.priority }}">{{ ticket.get_priority_display }}</span></div>
       <div><strong>BRTS Unit:</strong> {{ ticket.brts_unit }}</div>
+      <div><strong>Customer:</strong> {{ ticket.customer }}</div>
       <div><strong>Terminal:</strong> {{ ticket.terminal }}</div>
+      <div><strong>Region:</strong> {{ ticket.region }}</div>
       <div><strong>Comments:</strong><br><p class="comment-summary">{{ ticket.comment_summary }}</p></div>
       <div><strong>Problem Category:</strong> {{ ticket.problem_category }}</div>
       <div><strong>Description:</strong><br><p class="description">{{ ticket.description }}</p></div>

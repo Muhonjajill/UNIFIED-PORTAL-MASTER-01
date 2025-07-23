@@ -79,6 +79,8 @@ class TicketForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'brts_unit': forms.Select(attrs={'class': 'form-control'}),
+            'customer': forms.Select(attrs={'class':'form-control'}),
+            'region': forms.Select(attrs={'class':'form-control'}),
             'problem_category': forms.Select(attrs={'class': 'form-control'}),
             'terminal': forms.Select(attrs={'class': 'form-control'}),
             'priority': forms.Select(attrs={'class': 'form-control'}),
