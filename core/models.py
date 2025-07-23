@@ -173,6 +173,9 @@ class Ticket(models.Model):
     terminal = models.ForeignKey(Terminal, on_delete=models.SET_NULL, null=True)
     description = models.TextField()
 
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
+
     created_by = models.ForeignKey(User, related_name='created_tickets', on_delete=models.SET_NULL, null=True)
     assigned_to = models.ForeignKey(User, related_name='assigned_tickets', on_delete=models.SET_NULL, null=True, blank=True)
     responsible = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True, blank=True)

@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
+
 {% block title %}Reports{% endblock %}
 
 {% block content %}
+
 <link rel="stylesheet" href="{% static 'css/reports.css' %}">
 
 <div class="page-container">
@@ -12,15 +14,38 @@
 
   <!-- Filters -->
   <form method="get" class="report-filters">
-    <select name="category">
-      <option value="">All Categories</option>
-      <option value="tickets">Tickets</option>
-      <option value="users">Users</option>
-      <option value="zones">Zones</option>
+    <select name="customer">
+      <option value="All">All Customers</option>
+      {% for customer in customers %}
+        <option value="{{ customer }}" {% if request.GET.customer == customer %}selected{% endif %}>{{ customer }}</option>
+      {% endfor %}
     </select>
 
-    <input type="date" name="start_date">
-    <input type="date" name="end_date">
+    <select name="terminal">
+      <option value="All">All Terminals</option>
+      {% for terminal in terminals %}
+        <option value="{{ terminal }}" {% if request.GET.terminal == terminal %}selected{% endif %}>{{ terminal }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="region">
+      <option value="All">All Regions</option>
+      {% for region in regions %}
+        <option value="{{ region }}" {% if request.GET.region == region %}selected{% endif %}>{{ region }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="category">
+      <option value="All">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {% if request.GET.category == cat %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Date Filters -->
+    <input type="text" id="start_date" name="start_date" class="date-picker" value="{{ request.GET.start_date }}" placeholder="Start Date">
+    <input type="text" id="end_date" name="end_date" class="date-picker" value="{{ request.GET.end_date }}" placeholder="End Date">
+
 
     <button type="submit" class="btn">Filter</button>
   </form>
@@ -31,29 +56,46 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Report Name</th>
-          <th>Category</th>
-          <th>Date Generated</th>
-          <th>Download</th>
+          <th>Customer</th>
+          <th>Terminal</th>
+          <th>Problem Category</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Description</th>
+          <th>Responsible</th>
+          <th>Created At</th>
         </tr>
       </thead>
       <tbody>
-        {% for report in reports %}
+        {% for ticket in tickets %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td>{{ report.name }}</td>
-          <td>{{ report.category }}</td>
-          <td>{{ report.generated_at }}</td>
-          <td><a href="{{ report.file.url }}" class="btn btn-sm">Download</a></td>
+          <td>{{ ticket.customer.name }}</td>
+          <td>{{ ticket.terminal.name }}</td>
+          <td>{{ ticket.problem_category.name }}</td>
+          <td>{{ ticket.priority }}</td>
+          <td>{{ ticket.status }}</td>
+          <td>{{ ticket.description|truncatewords:10 }}</td>
+          <td>{{ ticket.responsible }}</td>
+          <td>{{ ticket.created_at }}</td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5">No reports found.</td>
+          <td colspan="9">No tickets found.</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+
 <script src="{% static 'js/ticketing_dashboard.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  flatpickr(".date-picker", {
+    dateFormat: "Y-m-d",
+    allowInput: true,
+    defaultDate: null
+  });
+</script>
 {% endblock %}

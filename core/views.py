@@ -1124,23 +1124,37 @@ def delete_zone(request, zone_id):
     return redirect('zones') 
 
 def reports(request):
-    reports_qs = Report.objects.all()
+    tickets = Ticket.objects.all()
 
+    customer = request.GET.get('customer')
+    terminal = request.GET.get('terminal')
+    region = request.GET.get('region')
     category = request.GET.get('category')
+
+    if customer and customer != 'All':
+        tickets = tickets.filter(customer=customer)
+    if terminal and terminal != 'All':
+        tickets = tickets.filter(terminal=terminal)
+    if region and region != 'All':
+        tickets = tickets.filter(region=region)
+    if category and category != 'All':
+        tickets = tickets.filter(problem_category=problem_category)
+
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 
-    if category:
-        reports_qs = reports_qs.filter(category=category)
-
     if start_date:
-        reports_qs = reports_qs.filter(generated_at__date__gte=parse_date(start_date))
+        tickets = tickets.filter(created_at__date__gte=parse_date(start_date))
     if end_date:
-        reports_qs = reports_qs.filter(generated_at__date__lte=parse_date(end_date))
-
-    return render(request, 'core/helpdesk/reports.html', {
-        'reports': reports_qs
-    })
+        tickets = tickets.filter(created_at__date__lte=parse_date(end_date))
+    context = {
+        'tickets': tickets,
+        'customers': Ticket.objects.values_list('customer', flat=True).distinct(),
+        'terminals': Ticket.objects.values_list('terminal', flat=True).distinct(),
+        'regions': Ticket.objects.values_list('region', flat=True).distinct(),
+        'categories': Ticket.objects.values_list('problem_category', flat=True).distinct(),
+    }
+    return render(request, 'core/helpdesk/reports.html', context)
 
 
 def version_controls(request):
@@ -1223,3 +1237,8 @@ def delete_version(request, pk):
     version = get_object_or_404(VersionControl, pk=pk)
     version.delete()
     return redirect('version_controls')  # Change this to your actual version list URL name
+
+
+
+
+
