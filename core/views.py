@@ -1161,8 +1161,17 @@ def reports(request):
 
       # 👉 Check if user clicked "Download Excel"
     if request.GET.get('download') == 'excel':
-        return export_tickets_to_excel(tickets, filter_by_customer)
+        customer_name = Customer.objects.get(id=customer).name if customer and customer not in ['All', 'None'] else None
+        terminal_filter = terminal_name if terminal_name else None
 
+        return export_tickets_to_excel(
+            tickets,
+            include_terminal=filter_by_customer,
+            customer_name=customer_name,
+            terminal_name=terminal_filter,
+            start_date=start_date,
+            end_date=end_date
+        )
     context = {
         'tickets': tickets,
         'customers': Customer.objects.all(),
@@ -1174,7 +1183,10 @@ def reports(request):
     }
     return render(request, 'core/helpdesk/reports.html', context)
 
-def export_tickets_to_excel(tickets, include_terminal=False):
+def export_tickets_to_excel(tickets, include_terminal=False, customer_name=None, terminal_name=None, start_date=None, end_date=None):
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = 'Tickets'
@@ -1202,14 +1214,28 @@ def export_tickets_to_excel(tickets, include_terminal=False):
         ]
         sheet.append(row)
 
+    # Dynamic filename
+    name_part = "report"
+    if customer_name:
+        name_part = f"{customer_name.replace(' ', '_')}_report"
+    elif terminal_name:
+        name_part = f"{terminal_name.replace(' ', '_')}_report"
+
+    date_part = ''
+    if start_date and end_date:
+        date_part = f"{start_date}_to_{end_date}"
+    elif start_date:
+        date_part = f"from_{start_date}"
+    elif end_date:
+        date_part = f"to_{end_date}"
+
+    filename = f"{name_part}_{date_part or timezone.now().strftime('%Y-%m-%d')}.xlsx"
+
     # Response
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    filename = f"ticket_report_{timezone.now().strftime('%Y-%m-%d_%H-%M')}.xlsx"
     response['Content-Disposition'] = f'attachment; filename={filename}'
     workbook.save(response)
     return response
-
-
 
 
 def version_controls(request):
