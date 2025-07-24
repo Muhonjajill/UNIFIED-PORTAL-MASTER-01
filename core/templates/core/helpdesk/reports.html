@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block title %}Reports{% endblock %}
 
 {% block content %}
@@ -31,12 +30,7 @@
       </div>
 
       <div class="col-md-3">
-        <select name="terminal" class="form-control">
-          <option value="All">All Terminals</option>
-          {% for terminal in terminals %}
-            <option value="{{ terminal.id }}" {% if request.GET.terminal == terminal.id|stringformat:"s" %}selected{% endif %}>{{ terminal.branch_name }}</option>
-          {% endfor %}
-        </select>
+        <input type="text" name="terminal_name" class="form-control" placeholder="Search Terminal by Branch Name" value="{{ request.GET.terminal_name }}">
       </div>
 
       <div class="col-md-3">
@@ -61,52 +55,83 @@
     <br><br>
 
     <!-- Date Filters -->
-    <input type="text" id="start_date" name="start_date" class="date-picker" value="{{ request.GET.start_date }}" placeholder="Start Date" <i class="fa fa-calendar" aria-hidden="true" />>
-    <input type="text" id="end_date" name="end_date" class="date-picker" value="{{ request.GET.end_date }}" placeholder="End Date" <i class="fa fa-calendar" aria-hidden="true"></i>>
-
+    <input type="text" id="start_date" name="start_date" class="date-picker" value="{{ request.GET.start_date }}" placeholder="Start Date">
+    <input type="text" id="end_date" name="end_date" class="date-picker" value="{{ request.GET.end_date }}" placeholder="End Date">
 
     <button type="submit" class="btn">Filter</button>
   </form>
 
   <!-- Report Table -->
-  <div class="table-responsive">
-    <table class="report-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Customer</th>
-          <th>Terminal</th>
-          <th>Region</th>
-          <th>Problem Category</th>
-          <th>Priority</th>
-          <th>Status</th>
-          <th>Description</th>
-          <th>Responsible</th>
-          <th>Created At</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for ticket in tickets %}
-        <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{ ticket.customer.name }}</td>
-          <td>{{ ticket.terminal }}</td>
-          <td>{{ ticket.region.name }}</td>
-          <td>{{ ticket.problem_category.name }}</td>
-          <td>{{ ticket.priority }}</td>
-          <td>{{ ticket.status }}</td>
-          <td>{{ ticket.description|truncatewords:10 }}</td>
-          <td>{{ ticket.responsible }}</td>
-          <td>{{ ticket.created_at }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="9">No tickets found.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  {% if request.GET.terminal_name %}
+    <!-- Table for Terminal filter -->
+    <div class="table-responsive">
+      <table class="report-table table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Problem Category</th>
+            <th>Status</th>
+            <th>Responsible</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in tickets %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ ticket.created_at }}</td>
+            <td>{{ ticket.updated_at }}</td>
+            <td>{{ ticket.problem_category.name }}</td>
+            <td>{{ ticket.status }}</td>
+            <td>{{ ticket.responsible }}</td>
+            <td>{{ ticket.description|truncatewords:10 }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7">No tickets found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <!-- Table for Customer filter or all data -->
+    <div class="table-responsive">
+      <table class="report-table table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Terminal</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Problem Category</th>
+            <th>Status</th>
+            <th>Responsible</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in tickets %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ ticket.customer.name }}</td>
+            <td>{{ ticket.terminal.branch_name }}</td>
+            <td>{{ ticket.created_at }}</td>
+            <td>{{ ticket.updated_at }}</td>
+            <td>{{ ticket.problem_category.name }}</td>
+            <td>{{ ticket.status }}</td>
+            <td>{{ ticket.responsible }}</td>
+            <td>{{ ticket.description|truncatewords:10 }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="10">No tickets found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
 </div>
 
 <script src="{% static 'js/ticketing_dashboard.js' %}"></script>

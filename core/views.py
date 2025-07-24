@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_list_or_404, redirect
+import openpyxl
 from .models import File
 from django.http import FileResponse, HttpResponse, JsonResponse
 from .forms import FileUploadForm, ProblemCategoryForm, TicketForm
@@ -1129,14 +1130,21 @@ def reports(request):
     tickets = Ticket.objects.all()
 
     customer = request.GET.get('customer')
-    terminal = request.GET.get('terminal')
+    terminal_name = request.GET.get("terminal_name")
+    #terminal = request.GET.get('terminal')
     region = request.GET.get('region')
     category = request.GET.get('category')
 
+
+    filter_by_customer = False
+    filter_by_terminal = False
+
     if customer and customer != 'All' and customer !="None":
         tickets = tickets.filter(customer_id=customer)
-    if terminal and terminal != 'All' and terminal != "None":
-        tickets = tickets.filter(terminal_id=terminal)
+        filter_by_customer = True  # 👈 Track customer filter
+    if terminal_name: #and terminal != 'All' and terminal != "None":
+        tickets = tickets.filter(terminal__branch_name__icontains=terminal_name)
+        filter_by_terminal = True  # 👈 Track terminal filter
     if region and region != 'All' and region != "None":
         tickets = tickets.filter(region_id=region)
     if category and category != 'All' and category !="None":
@@ -1153,7 +1161,7 @@ def reports(request):
 
       # 👉 Check if user clicked "Download Excel"
     if request.GET.get('download') == 'excel':
-        return export_tickets_to_excel(tickets)
+        return export_tickets_to_excel(tickets, filter_by_customer)
 
     context = {
         'tickets': tickets,
@@ -1161,44 +1169,46 @@ def reports(request):
         'terminals': Terminal.objects.all(),
         'regions': Region.objects.all(),
         'categories': ProblemCategory.objects.all(),
+        'filter_by_customer': filter_by_customer,
+        'filter_by_terminal': filter_by_terminal,
     }
     return render(request, 'core/helpdesk/reports.html', context)
 
-def export_tickets_to_excel(tickets):
-    workbook = Workbook()
+def export_tickets_to_excel(tickets, include_terminal=False):
+    workbook = openpyxl.Workbook()
     sheet = workbook.active
-    sheet.title = "Tickets Report"
+    sheet.title = 'Tickets'
 
-    headers = [
-        'ID', 'Customer', 'Terminal',  'Region', 'Category', 'Responsible',
-        'Description', 'Created At', 'CDM name', 'Serial number'
-    ]
+    # Headers
+    headers = []
+    if include_terminal:
+        headers.append('Terminal')
+
+    headers += ['Created At', 'Updated At', 'Problem Category', 'Status', 'Responsible', 'Description']
     sheet.append(headers)
 
+    # Data rows
     for ticket in tickets:
-        sheet.append([
-            ticket.id,
-            str(ticket.customer.name) if ticket.customer else "N/A",
-            str(ticket.terminal.branch_name) if ticket.terminal else "N/A",
-            str(ticket.region.name) if ticket.region else "N/A",
-            str(ticket.problem_category.name) if ticket.problem_category else "N/A",
-            str(ticket.responsible) if ticket.responsible else "N/A",
-            str(ticket.description) if ticket.description else "N/A",
-            ticket.created_at.strftime("%Y-%m-%d %H:%M:%S") if ticket.created_at else "N/A",
-            
-            ticket.terminal.cdm_name if ticket.terminal else "N/A",
-            ticket.terminal.serial_number if ticket.terminal else "N/A",
-        ])
+        row = []
+        if include_terminal:
+            row.append(ticket.terminal.branch_name)
+        row += [
+            ticket.created_at.strftime('%Y-%m-%d %H:%M'),
+            ticket.updated_at.strftime('%Y-%m-%d %H:%M'),
+            str(ticket.problem_category),
+            ticket.status,
+            str(ticket.responsible),
+            ticket.description,
+        ]
+        sheet.append(row)
 
-    # Adjust column widths
-    for column_cells in sheet.columns:
-        length = max(len(str(cell.value)) for cell in column_cells)
-        sheet.column_dimensions[get_column_letter(column_cells[0].column)].width = length + 2
-
+    # Response
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="tickets_report.xlsx"'
+    filename = f"ticket_report_{timezone.now().strftime('%Y-%m-%d_%H-%M')}.xlsx"
+    response['Content-Disposition'] = f'attachment; filename={filename}'
     workbook.save(response)
-    return response 
+    return response
+
 
 
 
